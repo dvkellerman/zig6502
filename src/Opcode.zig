@@ -9,7 +9,7 @@ pub const Opcode = struct {
     mode: AddressingMode,
     flags: u8,
 
-    pub fn by_hex(hex: u8) ?Opcode {
+    pub fn by_hex(hex: u8) Opcode {
         for (Opcodes) |o| {
             if (o.hex == hex) {
                 return o;

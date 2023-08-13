@@ -97,7 +97,177 @@ pub const CPU = struct {
             }
             var hex = mem.read(self.PC);
             const opcode = Opcode.by_hex(hex);
-            _ = opcode;
+            // fill this switch with all the instructions
+            switch (opcode.instruction) {
+                .BRK => {
+                    break;
+                },
+                .ADC => {
+                    break;
+                },
+                .SBC => {
+                    break;
+                },
+                .AND => {
+                    break;
+                },
+                .ORA => {
+                    break;
+                },
+                .EOR => {
+                    break;
+                },
+                .CMP => {
+                    break;
+                },
+                .CPX => {
+                    break;
+                },
+                .CPY => {
+                    break;
+                },
+                .BIT => {
+                    break;
+                },
+                .ASL => {
+                    break;
+                },
+                .LSR => {
+                    break;
+                },
+                .ROL => {
+                    break;
+                },
+                .ROR => {
+                    break;
+                },
+                .INC => {
+                    break;
+                },
+                .INX => {
+                    break;
+                },
+                .INY => {
+                    break;
+                },
+                .DEC => {
+                    break;
+                },
+                .DEX => {
+                    break;
+                },
+                .DEY => {
+                    break;
+                },
+                .JMP => {
+                    break;
+                },
+                .JSR => {
+                    break;
+                },
+                .RTS => {
+                    break;
+                },
+                .BCC => {
+                    break;
+                },
+                .BCS => {
+                    break;
+                },
+                .BEQ => {
+                    break;
+                },
+                .BMI => {
+                    break;
+                },
+                .BNE => {
+                    break;
+                },
+                .BPL => {
+                    break;
+                },
+                .BVC => {
+                    break;
+                },
+                .BVS => {
+                    break;
+                },
+                .CLC => {
+                    break;
+                },
+                .CLD => {
+                    break;
+                },
+                .CLI => {
+                    break;
+                },
+                .CLV => {
+                    break;
+                },
+                .SEC => {
+                    break;
+                },
+                .SED => {
+                    break;
+                },
+                .SEI => {
+                    break;
+                },
+                .LDA => {
+                    break;
+                },
+                .LDX => {
+                    break;
+                },
+                .LDY => {
+                    break;
+                },
+                .STA => {
+                    break;
+                },
+                .STX => {
+                    break;
+                },
+                .STY => {
+                    break;
+                },
+                .TAX => {
+                    break;
+                },
+                .TAY => {
+                    break;
+                },
+                .TSX => {
+                    break;
+                },
+                .TXA => {
+                    break;
+                },
+                .TXS => {
+                    break;
+                },
+                .TYA => {
+                    break;
+                },
+                .PHA => {
+                    break;
+                },
+                .PHP => {
+                    break;
+                },
+                .PLA => {
+                    break;
+                },
+                .PLP => {
+                    break;
+                },
+                .NOP => {
+                    break;
+                },
+                .RTI => {
+                    break;
+                },
+            }
         }
     }
 };
