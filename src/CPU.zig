@@ -63,6 +63,17 @@ pub const Instruction = enum {
     TYA,
 };
 
+const Flag = enum(u8) {
+    Carry = 1 << 0,
+    Zero = 1 << 1,
+    InterruptDisable = 1 << 2,
+    DecimalMode = 1 << 3,
+    Break = 1 << 4,
+    Break2 = 1 << 5,
+    Overflow = 1 << 6,
+    Negative = 1 << 7,
+};
+
 pub const CPU = struct {
     A: u8,
     X: u8,
@@ -88,6 +99,18 @@ pub const CPU = struct {
         self.SP = 0x1FF;
         self.PC = 0;
         self.P = 0;
+    }
+
+    pub fn get_flag(self: *CPU, flag: Flag) bool {
+        return (self.P & flag) != 0;
+    }
+
+    fn set_flag(self: *CPU, flag: Flag) void {
+        self.P |= flag;
+    }
+
+    fn clear_flag(self: *CPU, flag: Flag) void {
+        self.P &= !flag;
     }
 
     pub fn run(self: *CPU, mem: *Memory) void {
