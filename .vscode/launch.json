@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "gdb",
+            "name": "Debug",
+            "request": "launch",
+            "program": "./zig-out/bin/zig6502",
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "build",
+        },
+    ]
+}
