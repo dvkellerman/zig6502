@@ -21,22 +21,22 @@ pub const Operand = struct {
             },
             .AbsoluteX => {
                 const base = mem.read16(cpu.PC + 1);
-                address = base + @as(u16, cpu.X);
+                address = base +% @as(u16, cpu.X);
             },
             .AbsoluteY => {
                 const base = mem.read16(cpu.PC + 1);
-                address = base + @as(u16, cpu.Y);
+                address = base +% @as(u16, cpu.Y);
             },
             .ZeroPage => {
                 address = @as(u16, mem.read(cpu.PC + 1));
             },
             .ZeroPageX => {
                 const base = mem.read(cpu.PC + 1);
-                address = @as(u16, base + cpu.X);
+                address = @as(u16, base +% cpu.X);
             },
             .ZeroPageY => {
                 const base = mem.read(cpu.PC + 1);
-                address = @as(u16, base + cpu.Y);
+                address = @as(u16, base +% cpu.Y);
             },
             .Indirect => {
                 const base = mem.read16(cpu.PC + 1);
@@ -46,7 +46,7 @@ pub const Operand = struct {
             },
             .IndirectX => {
                 const base = mem.read(cpu.PC + 1);
-                const ptr = base + cpu.X;
+                const ptr = base +% cpu.X;
                 const lo = mem.read(@as(u16, ptr));
                 const hi = mem.read(@as(u16, ptr + 1));
                 address = @as(u16, hi) << 8 | @as(u16, lo);
@@ -56,7 +56,7 @@ pub const Operand = struct {
                 const lo = mem.read(@as(u16, ptr));
                 const hi = mem.read(@as(u16, ptr + 1));
                 address = @as(u16, hi) << 8 | @as(u16, lo);
-                address += @as(u16, cpu.Y);
+                address +%= @as(u16, cpu.Y);
             },
             .Implied, .Accumulator => {
                 return null;
