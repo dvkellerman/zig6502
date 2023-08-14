@@ -14,45 +14,45 @@ pub const Operand = struct {
 
         switch (mode) {
             .Immediate, .Relative => {
-                address = @as(u16, mem.read(cpu.PC));
+                address = @as(u16, mem.read(cpu.PC + 1));
             },
             .Absolute => {
-                address = mem.read16(cpu.PC);
+                address = mem.read16(cpu.PC + 1);
             },
             .AbsoluteX => {
-                const base = mem.read16(cpu.PC);
+                const base = mem.read16(cpu.PC + 1);
                 address = base + @as(u16, cpu.X);
             },
             .AbsoluteY => {
-                const base = mem.read16(cpu.PC);
+                const base = mem.read16(cpu.PC + 1);
                 address = base + @as(u16, cpu.Y);
             },
             .ZeroPage => {
-                address = @as(u16, mem.read(cpu.PC));
+                address = @as(u16, mem.read(cpu.PC + 1));
             },
             .ZeroPageX => {
-                const base = mem.read(cpu.PC);
+                const base = mem.read(cpu.PC + 1);
                 address = @as(u16, base + cpu.X);
             },
             .ZeroPageY => {
-                const base = mem.read(cpu.PC);
+                const base = mem.read(cpu.PC + 1);
                 address = @as(u16, base + cpu.Y);
             },
             .Indirect => {
-                const base = mem.read16(cpu.PC);
+                const base = mem.read16(cpu.PC + 1);
                 const lo = mem.read(base);
                 const hi = mem.read(base + 1);
                 address = @as(u16, hi) << 8 | @as(u16, lo);
             },
             .IndirectX => {
-                const base = mem.read(cpu.PC);
+                const base = mem.read(cpu.PC + 1);
                 const ptr = base + cpu.X;
                 const lo = mem.read(@as(u16, ptr));
                 const hi = mem.read(@as(u16, ptr + 1));
                 address = @as(u16, hi) << 8 | @as(u16, lo);
             },
             .IndirectY => {
-                const ptr = mem.read(cpu.PC);
+                const ptr = mem.read(cpu.PC + 1);
                 const lo = mem.read(@as(u16, ptr));
                 const hi = mem.read(@as(u16, ptr + 1));
                 address = @as(u16, hi) << 8 | @as(u16, lo);

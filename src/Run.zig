@@ -2,12 +2,11 @@ const std = @import("std");
 const CPU = @import("CPU.zig").CPU;
 const Flag = @import("CPU.zig").Flag;
 const Memory = @import("Memory.zig").Memory;
-const Opcode = @import("Operand.zig").Operand;
+const Opcode = @import("Opcode.zig").Opcode;
 const Operand = @import("Operand.zig").Operand;
 
 pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
     _ = mem;
-    _ = cpu;
     _ = operand;
 
     switch (opcode.instruction) {
@@ -68,6 +67,7 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
         .NOP => {},
         .RTI => {},
     }
+    update_P_PC(cpu, 0, opcode);
 }
 
 fn update_P_PC(self: *CPU, value: u8, opcode: Opcode) void {
@@ -76,10 +76,10 @@ fn update_P_PC(self: *CPU, value: u8, opcode: Opcode) void {
     } else {
         self.clear_flag(Flag.Zero);
     }
-    if (value & 0x80) {
+    if (value & 0x80 > 0) {
         self.set_flag(Flag.Negative);
     } else {
         self.clear_flag(Flag.Negative);
     }
-    self.PC += opcode.bytes - 1;
+    self.PC += opcode.bytes;
 }

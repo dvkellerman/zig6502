@@ -25,10 +25,10 @@ pub const Memory = struct {
         self.data[address] = value;
     }
 
-    pub fn dump(self: Memory) void {
+    pub fn dump(self: Memory) !void {
         var i: u16 = 0;
         while (i < 0xFFFF) : (i += 1) {
-            std.debug.print("0x{x}\n", .{self.data[i]});
+            try std.io.getStdOut().writter().print("0x{x}\n", .{self.data[i]});
         }
     }
 

@@ -19,12 +19,12 @@ pub const NES = struct {
         allocator.destroy(self);
     }
 
-    pub fn load_and_run(self: *NES, rom: []const u8) void {
+    pub fn load_and_run(self: *NES, rom: []const u8) !void {
         const offset: u16 = 0x600; // 0x8000;
         self.load(rom, offset);
         self.mem.write16(0xFFFC, offset);
         self.reset();
-        self.run();
+        try self.run();
     }
 
     fn load(self: *NES, rom: []const u8, offset: u16) void {
@@ -39,7 +39,7 @@ pub const NES = struct {
         self.cpu.PC = self.mem.read16(0xFFFC);
     }
 
-    fn run(self: *NES) void {
-        self.cpu.run(self.mem);
+    fn run(self: *NES) !void {
+        try self.cpu.run(self.mem);
     }
 };

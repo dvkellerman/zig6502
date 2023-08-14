@@ -105,28 +105,27 @@ pub const CPU = struct {
     }
 
     pub fn get_flag(self: *CPU, flag: Flag) bool {
-        return (self.P & flag) != 0;
+        return (self.P & @intFromEnum(flag)) != 0;
     }
 
-    fn set_flag(self: *CPU, flag: Flag) void {
-        self.P |= flag;
+    pub fn set_flag(self: *CPU, flag: Flag) void {
+        self.P |= @intFromEnum(flag);
     }
 
-    fn clear_flag(self: *CPU, flag: Flag) void {
-        self.P &= !flag;
+    pub fn clear_flag(self: *CPU, flag: Flag) void {
+        self.P &= ~@intFromEnum(flag);
     }
 
-    pub fn run(self: *CPU, mem: *Memory) void {
+    pub fn run(self: *CPU, mem: *Memory) !void {
         while (true) {
             if (self.PC >= 0xFFFF) {
                 break;
             }
             var hex = mem.read(self.PC);
-            const opcode = Opcode.by_hex(hex);
-            Debug.print(*self, *mem, opcode);
-            self.PC += 1;
-            const operand = Operand.get_operand(self, mem, opcode);
-            Run.run(opcode, operand, self, mem);
+            const op = Opcode.by_hex(hex);
+            try Debug.print(self, mem, op);
+            const operand = Operand.get_operand(self, mem, op);
+            try Run.run(op, operand, self, mem);
         }
     }
 };
