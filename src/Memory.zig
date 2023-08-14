@@ -33,15 +33,8 @@ pub const Memory = struct {
     }
 
     pub fn write16(self: *Memory, address: u16, value: u16) void {
-        _ = value;
-        _ = address;
-        _ = self;
-        // var a = value >> 8;
-        // var b: u8 = @as(u8, a);
-        // _ = b;
-        // const lo: u16 = value & 0xFF;
-        // self.data[address] = lo;
-        // self.data[address + 1] = @as(u8, value >> 8);
+        self.data[address] = @truncate(value & 0xFF);
+        self.data[address + 1] = @truncate(value >> 8);
     }
 
     pub fn read16(self: Memory, address: u16) u16 {

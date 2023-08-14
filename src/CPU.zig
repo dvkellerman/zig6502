@@ -1,6 +1,9 @@
 const std = @import("std");
 const Memory = @import("Memory.zig").Memory;
 const Opcode = @import("Opcode.zig").Opcode;
+const Operand = @import("Operand.zig").Operand;
+const Debug = @import("Debug.zig");
+const Run = @import("Run.zig");
 
 pub const AddressingMode = enum { Accumulator, Absolute, AbsoluteX, AbsoluteY, Immediate, Implied, Indirect, IndirectX, IndirectY, Relative, ZeroPage, ZeroPageX, ZeroPageY };
 
@@ -63,7 +66,7 @@ pub const Instruction = enum {
     TYA,
 };
 
-const Flag = enum(u8) {
+pub const Flag = enum(u8) {
     Carry = 1 << 0,
     Zero = 1 << 1,
     InterruptDisable = 1 << 2,
@@ -120,177 +123,10 @@ pub const CPU = struct {
             }
             var hex = mem.read(self.PC);
             const opcode = Opcode.by_hex(hex);
-            // fill this switch with all the instructions
-            switch (opcode.instruction) {
-                .BRK => {
-                    break;
-                },
-                .ADC => {
-                    break;
-                },
-                .SBC => {
-                    break;
-                },
-                .AND => {
-                    break;
-                },
-                .ORA => {
-                    break;
-                },
-                .EOR => {
-                    break;
-                },
-                .CMP => {
-                    break;
-                },
-                .CPX => {
-                    break;
-                },
-                .CPY => {
-                    break;
-                },
-                .BIT => {
-                    break;
-                },
-                .ASL => {
-                    break;
-                },
-                .LSR => {
-                    break;
-                },
-                .ROL => {
-                    break;
-                },
-                .ROR => {
-                    break;
-                },
-                .INC => {
-                    break;
-                },
-                .INX => {
-                    break;
-                },
-                .INY => {
-                    break;
-                },
-                .DEC => {
-                    break;
-                },
-                .DEX => {
-                    break;
-                },
-                .DEY => {
-                    break;
-                },
-                .JMP => {
-                    break;
-                },
-                .JSR => {
-                    break;
-                },
-                .RTS => {
-                    break;
-                },
-                .BCC => {
-                    break;
-                },
-                .BCS => {
-                    break;
-                },
-                .BEQ => {
-                    break;
-                },
-                .BMI => {
-                    break;
-                },
-                .BNE => {
-                    break;
-                },
-                .BPL => {
-                    break;
-                },
-                .BVC => {
-                    break;
-                },
-                .BVS => {
-                    break;
-                },
-                .CLC => {
-                    break;
-                },
-                .CLD => {
-                    break;
-                },
-                .CLI => {
-                    break;
-                },
-                .CLV => {
-                    break;
-                },
-                .SEC => {
-                    break;
-                },
-                .SED => {
-                    break;
-                },
-                .SEI => {
-                    break;
-                },
-                .LDA => {
-                    break;
-                },
-                .LDX => {
-                    break;
-                },
-                .LDY => {
-                    break;
-                },
-                .STA => {
-                    break;
-                },
-                .STX => {
-                    break;
-                },
-                .STY => {
-                    break;
-                },
-                .TAX => {
-                    break;
-                },
-                .TAY => {
-                    break;
-                },
-                .TSX => {
-                    break;
-                },
-                .TXA => {
-                    break;
-                },
-                .TXS => {
-                    break;
-                },
-                .TYA => {
-                    break;
-                },
-                .PHA => {
-                    break;
-                },
-                .PHP => {
-                    break;
-                },
-                .PLA => {
-                    break;
-                },
-                .PLP => {
-                    break;
-                },
-                .NOP => {
-                    break;
-                },
-                .RTI => {
-                    break;
-                },
-            }
+            Debug.print(*self, *mem, opcode);
+            self.PC += 1;
+            const operand = Operand.get_operand(self, mem, opcode);
+            Run.run(opcode, operand, self, mem);
         }
     }
 };
