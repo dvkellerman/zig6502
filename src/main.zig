@@ -1,5 +1,6 @@
 const std = @import("std");
 const NES = @import("NES.zig").NES;
+const c = @cImport(@cInclude("SDL2/SDL.h"));
 
 pub fn main() !void {
     var memory: [0xFFFF + 5000000]u8 = undefined;
@@ -12,3 +13,21 @@ pub fn main() !void {
         nes.destroy(allocator);
     }
 }
+
+// if (c.SDL_Init(c.SDL_INIT_VIDEO) != 0) {
+//     c.SDL_Log("Unable to initialize SDL: %s", c.SDL_GetError());
+//     return error.SDLInitializationFailed;
+// }
+// defer c.SDL_Quit();
+
+// const screen = c.SDL_CreateWindow("My Game Window", c.SDL_WINDOWPOS_UNDEFINED, c.SDL_WINDOWPOS_UNDEFINED, 300, 73, c.SDL_WINDOW_OPENGL) orelse
+//     {
+//     c.SDL_Log("Unable to create window: %s", c.SDL_GetError());
+//     return error.SDLInitializationFailed;
+// };
+// defer c.SDL_DestroyWindow(screen);
+// const renderer = c.SDL_CreateRenderer(screen, -1, 0) orelse {
+//     c.SDL_Log("Unable to create renderer: %s", c.SDL_GetError());
+//     return error.SDLInitializationFailed;
+// };
+// defer c.SDL_DestroyRenderer(renderer);

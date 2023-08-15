@@ -6,11 +6,10 @@ const Opcode = @import("Opcode.zig").Opcode;
 
 pub fn print(cpu: *CPU, mem: *Memory, opcode: Opcode) !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
+    var allocator = gpa.allocator();
     defer {
         _ = gpa.deinit();
     }
-
     const PC = cpu.PC;
     const hex: u8 = opcode.hex;
     const instruction: []const u8 = @tagName(opcode.instruction);

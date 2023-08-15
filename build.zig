@@ -5,6 +5,8 @@ pub fn build(b: *std.build.Builder) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const exe = b.addExecutable(.{ .name = "zig6502", .root_source_file = .{ .path = "src/main.zig" }, .optimize = optimize, .target = target });
+    exe.linkSystemLibrary("sdl2");
+    exe.linkSystemLibrary("C");
     b.installArtifact(exe);
 
     const run_cmd = b.addRunArtifact(exe);

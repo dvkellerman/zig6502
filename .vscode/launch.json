@@ -2,10 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
+            "type": "lldb",
             "name": "Debug",
             "request": "launch",
             "program": "./zig-out/bin/zig6502",
+            "args": [
+                "/Users/dkeller/zig/zig"
+            ],
             "cwd": "${workspaceFolder}",
             "preLaunchTask": "build",
         },
