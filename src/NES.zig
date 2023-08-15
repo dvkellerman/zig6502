@@ -20,7 +20,7 @@ pub const NES = struct {
     }
 
     pub fn load_and_run(self: *NES, rom: []const u8) !void {
-        const offset: u16 = 0x600; // 0x8000;
+        const offset: u16 = 0x600; // 8000;
         self.load(rom, offset);
         self.mem.write16(0xFFFC, offset);
         self.reset();

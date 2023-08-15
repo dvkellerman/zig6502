@@ -44,7 +44,8 @@ const Operand = struct {
     fn get(cpu: *CPU, mem: *Memory, opcode: Opcode, allocator: std.mem.Allocator) !Operand {
         return switch (opcode.mode) {
             .Accumulator => {
-                return Operand{ .value = null, .formatted = "A" };
+                const formatted = try fmt.allocPrint(allocator, "A", .{});
+                return Operand{ .value = null, .formatted = formatted };
             },
             .Absolute => {
                 const addr = mem.read16(cpu.PC + 1);
