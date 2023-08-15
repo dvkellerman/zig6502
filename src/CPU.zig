@@ -99,7 +99,7 @@ pub const CPU = struct {
         self.A = 0;
         self.X = 0;
         self.Y = 0;
-        self.SP = 0x1FF;
+        self.SP = 0xFF;
         self.PC = 0;
         self.P = 0;
     }
@@ -114,6 +114,16 @@ pub const CPU = struct {
 
     pub fn clear_flag(self: *CPU, flag: Flag) void {
         self.P &= ~@intFromEnum(flag);
+    }
+
+    pub fn push_stack(self: *CPU, mem: *Memory, value: u8) void {
+        mem.write(0x100 | self.SP, value);
+        self.SP -= 1;
+    }
+
+    pub fn pop_stack(self: *CPU, mem: *Memory) u8 {
+        self.SP += 1;
+        return mem.read(0x100 | self.SP);
     }
 
     pub fn run(self: *CPU, mem: *Memory) !void {
