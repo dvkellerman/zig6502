@@ -417,5 +417,5 @@ fn update_P_PC(self: *CPU, value: ?u8, opcode: Opcode) void {
             self.clear_flag(Flag.Negative);
         }
     }
-    self.PC += opcode.bytes;
+    self.PC +%= opcode.bytes;
 }
