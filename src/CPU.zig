@@ -128,9 +128,6 @@ pub const CPU = struct {
 
     pub fn run(self: *CPU, mem: *Memory) !void {
         while (true) {
-            if (self.PC >= 0xFFFF) {
-                break;
-            }
             var hex = mem.read(self.PC);
             const op = Opcode.by_hex(hex);
             try Debug.print(self, mem, op);
