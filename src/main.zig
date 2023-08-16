@@ -2,8 +2,8 @@ const std = @import("std");
 const NES = @import("NES.zig").NES;
 const c = @cImport(@cInclude("SDL2/SDL.h"));
 
-var screen: c.SDL_Window = undefined;
-var renderer: c.SDL_Renderer = undefined;
+var screen: *c.SDL_Window = undefined;
+var renderer: *c.SDL_Renderer = undefined;
 
 pub fn main() !void {
     if (c.SDL_Init(c.SDL_INIT_VIDEO) != 0) {
@@ -12,7 +12,7 @@ pub fn main() !void {
     }
     defer c.SDL_Quit();
 
-    screen = c.SDL_CreateWindow("My Game Window", c.SDL_WINDOWPOS_UNDEFINED, c.SDL_WINDOWPOS_UNDEFINED, 300, 73, c.SDL_WINDOW_OPENGL) orelse
+    screen = c.SDL_CreateWindow("My Game Window", c.SDL_WINDOWPOS_CENTERED, c.SDL_WINDOWPOS_CENTERED, 300, 73, c.SDL_WINDOW_OPENGL) orelse
         {
         c.SDL_Log("Unable to create window: %s", c.SDL_GetError());
         return error.SDLInitializationFailed;
@@ -32,5 +32,9 @@ pub fn main() !void {
     defer {
         nes.destroy(allocator);
     }
-    try nes.load_and_run(program);
+    try nes.load_and_run(program, callback);
+}
+
+fn callback() void {
+    std.time.sleep(500 * 1000 * 1000);
 }

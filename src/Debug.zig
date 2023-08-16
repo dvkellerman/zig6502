@@ -18,7 +18,8 @@ pub fn print(cpu: *CPU, mem: *Memory, opcode: Opcode) !void {
 
     const stdout = std.io.getStdOut().writer();
     if (operand.value == null) {
-        try stdout.print("0x{x:0>4}    {x:0>2}        {s}\n", .{ PC, hex, instruction });
+        const formatted = if (operand.formatted) |formatted| formatted else "";
+        try stdout.print("0x{x:0>4}    {x:0>2}        {s} {s}\n", .{ PC, hex, instruction, formatted });
     } else if (operand.value) |value| {
         const hi = (value >> 8);
         const lo = (value & 0xFF);

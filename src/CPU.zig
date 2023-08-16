@@ -126,13 +126,14 @@ pub const CPU = struct {
         return mem.read(0x100 | self.SP);
     }
 
-    pub fn run(self: *CPU, mem: *Memory) !void {
+    pub fn run(self: *CPU, mem: *Memory, callback: *const fn () void) !void {
         while (true) {
             var hex = mem.read(self.PC);
             const op = Opcode.by_hex(hex);
             try Debug.print(self, mem, op);
             const operand = Operand.get_operand(self, mem, op);
             try Run.run(op, operand, self, mem);
+            callback();
         }
     }
 };

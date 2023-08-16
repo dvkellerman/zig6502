@@ -8,13 +8,16 @@ const Operand = @import("Operand.zig").Operand;
 pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
     switch (opcode.instruction) {
         .BRK => {
-            cpu.set_flag(Flag.Break);
-            cpu.push_stack(mem, @truncate(cpu.PC >> 8));
-            cpu.push_stack(mem, @truncate(cpu.PC & 0xFF));
-            cpu.push_stack(mem, cpu.P);
-            cpu.set_flag(Flag.InterruptDisable);
-            cpu.PC = mem.read(0xFFFE);
-            update_P_PC(cpu, null, opcode);
+            if (!cpu.get_flag(Flag.InterruptDisable)) {
+                cpu.set_flag(Flag.Break);
+                cpu.push_stack(mem, @truncate(cpu.PC >> 8));
+                cpu.push_stack(mem, @truncate(cpu.PC & 0xFF));
+                cpu.push_stack(mem, cpu.P);
+                cpu.set_flag(Flag.InterruptDisable);
+                cpu.PC = mem.read(0xFFFE);
+            } else {
+                update_P_PC(cpu, null, opcode);
+            }
         },
         .ADC => {
             const value = @as(u16, operand.value);
@@ -71,7 +74,7 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
             } else {
                 cpu.clear_flag(Flag.Carry);
             }
-            const result: u8 = cpu.A - value;
+            const result: u8 = cpu.A -% value;
             update_P_PC(cpu, result, opcode);
         },
         .CPX => {
@@ -81,7 +84,7 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
             } else {
                 cpu.clear_flag(Flag.Carry);
             }
-            const result: u8 = cpu.X - value;
+            const result: u8 = cpu.X -% value;
             update_P_PC(cpu, result, opcode);
         },
         .CPY => {
@@ -91,7 +94,7 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
             } else {
                 cpu.clear_flag(Flag.Carry);
             }
-            const result: u8 = cpu.Y - value;
+            const result: u8 = cpu.Y -% value;
             update_P_PC(cpu, result, opcode);
         },
         .BIT => {
@@ -217,9 +220,9 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
             }
         },
         .JSR => {
-            cpu.PC = cpu.PC - 1 + 2;
-            cpu.push_stack(mem, @truncate(cpu.PC >> 8));
-            cpu.push_stack(mem, @truncate(cpu.PC & 0xFF));
+            const PC = cpu.PC + 2;
+            cpu.push_stack(mem, @truncate(PC >> 8));
+            cpu.push_stack(mem, @truncate(PC & 0xFF));
             if (operand.address) |unwrapped| {
                 cpu.PC = unwrapped;
             }
@@ -227,71 +230,87 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
         .RTS => {
             const low: u8 = cpu.pop_stack(mem);
             const high: u8 = cpu.pop_stack(mem);
-            cpu.PC = (@as(u16, high) << 8) | @as(u16, low);
+            cpu.PC = (@as(u16, high) << 8) | @as(u16, low) + 1;
         },
         .BCC => {
             if (!cpu.get_flag(Flag.Carry)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BCS => {
             if (cpu.get_flag(Flag.Carry)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BEQ => {
             if (cpu.get_flag(Flag.Zero)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BMI => {
             if (cpu.get_flag(Flag.Negative)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BNE => {
             if (!cpu.get_flag(Flag.Zero)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BPL => {
             if (!cpu.get_flag(Flag.Negative)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BVC => {
             if (!cpu.get_flag(Flag.Overflow)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .BVS => {
             if (cpu.get_flag(Flag.Overflow)) {
-                if (operand.address) |unwrapped| {
-                    cpu.PC = unwrapped;
+                if (operand.address) |offset| {
+                    const newPC = cpu.PC + 2 + offset;
+                    cpu.PC = newPC;
                 }
+            } else {
+                update_P_PC(cpu, null, opcode);
             }
-            update_P_PC(cpu, null, opcode);
         },
         .CLC => {
             cpu.clear_flag(Flag.Carry);
@@ -401,7 +420,6 @@ pub fn run(opcode: Opcode, operand: Operand, cpu: *CPU, mem: *Memory) !void {
             update_P_PC(cpu, null, opcode);
         },
     }
-    update_P_PC(cpu, null, opcode);
 }
 
 fn update_P_PC(self: *CPU, value: ?u8, opcode: Opcode) void {
@@ -417,5 +435,5 @@ fn update_P_PC(self: *CPU, value: ?u8, opcode: Opcode) void {
             self.clear_flag(Flag.Negative);
         }
     }
-    self.PC +%= opcode.bytes;
+    self.PC += opcode.bytes;
 }
